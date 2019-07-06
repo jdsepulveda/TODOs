@@ -11,6 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:text="@string/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnCancel"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft"/>
+
         <androidx.constraintlayout.widget.Guideline
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,16 +34,12 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="16dp"/>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:src="@color/colorAccent"
+        <Button
+            android:text="@string/save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:id="@+id/fBtnAddTask"
-            app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
+            android:id="@+id/btnSave" app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
