@@ -5,4 +5,10 @@
     <string name="task">Task</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="task_title">Task Title</string>
+    <string name="task_description">Task Description</string>
+    <string name="high_priority">High Priority</string>
+    <string name="delete">Delete</string>
+    <string name="done">Done</string>
+
 </resources>
