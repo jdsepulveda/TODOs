@@ -8,7 +8,10 @@ import com.todo.database.TaskDatabaseDAO
 import com.todo.model.Task
 import kotlinx.coroutines.*
 
-class TaskViewModel(val database : TaskDatabaseDAO) : ViewModel() {
+class TaskViewModel(
+    private val taskKey: Long = 0L,
+    val database : TaskDatabaseDAO) : ViewModel() {
+
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 

@@ -10,10 +10,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 
 import com.todo.R
 import com.todo.adapter.TaskListAdapter
+import com.todo.adapter.TaskListListener
 import com.todo.database.TaskDatabase
 import com.todo.databinding.FragmentTaskListBinding
 import com.todo.viewModel.TaskListViewModel
@@ -30,7 +32,7 @@ class TaskListFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_task_list, container, false)
 
         binding.fBtnAddTask.setOnClickListener { v: View ->
-            v.findNavController().navigate(TaskListFragmentDirections.actionTaskListFragmentToTaskFragment())
+            v.findNavController().navigate(TaskListFragmentDirections.actionTaskListFragmentToTaskFragment(-1))
         }
 
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.todo_list)
@@ -40,9 +42,21 @@ class TaskListFragment : Fragment() {
         val viewModelFactory = TaskListViewModelFactory(dataSource)
         val taskListViewModel = ViewModelProviders.of(this, viewModelFactory).get(TaskListViewModel::class.java)
 
-        val adapter = TaskListAdapter()
+        val adapter = TaskListAdapter(TaskListListener { taskId ->
+            taskListViewModel.onTaskClicked(taskId)
+        })
+
         binding.rvTaskList.adapter = adapter
         binding.rvTaskList.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+
+        taskListViewModel.navigateToTaskDetail.observe(this, Observer { task ->
+            task?.let {
+                this.findNavController().navigate(TaskListFragmentDirections
+                    .actionTaskListFragmentToTaskFragment(task))
+
+                taskListViewModel.onTaskDetailNavigated()
+            }
+        })
 
         taskListViewModel.tasks.observe(this, Observer {
             it?.let {

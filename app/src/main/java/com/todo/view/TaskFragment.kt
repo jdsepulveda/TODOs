@@ -32,6 +32,8 @@ class TaskFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.task)
 
+        val arguments = TaskFragmentArgs.fromBundle(arguments!!)
+
         val application = requireNotNull(this.activity).application
         val dataSource = TaskDatabase.getInstance(application).taskDatabaseDAO
         val viewModelFactory = TaskViewModelFactory(dataSource)
