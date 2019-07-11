@@ -1,12 +1,12 @@
 package com.todo.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.util.Log
+import androidx.lifecycle.*
 import com.todo.database.DBTask
 import com.todo.database.TaskDatabaseDAO
 import com.todo.model.Task
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class TaskViewModel(
     private val taskKey: Long = 0L,
@@ -19,21 +19,33 @@ class TaskViewModel(
     val backToTaskList : LiveData<Boolean?>
         get() = _backToTaskList
 
+    private var _task = MediatorLiveData<Task>()
+    var task : LiveData<Task>? = null
+        get() = _task
+
+    init {
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                _task.postValue(DBTask.asDomainModel(database.getTaskWithId(taskKey)))
+            }
+        }
+    }
+
     fun onProcessTask(task: Task) {
         if (task.taskId > 0) {
             onUpdateTask(task)
         } else {
-            onSaveTask(task)
+            onSaveTask()
         }
     }
 
-    fun onSaveTask(task: Task) {
+    fun onSaveTask() {
         uiScope.launch {
             val newTask = DBTask()
-            newTask.title = task.title
-            newTask.desc = task.desc
-            newTask.priorityLevel = task.priorityLevel
-            newTask.status = task.status
+            newTask.title = newTask.title
+            newTask.desc = newTask.desc
+            newTask.priorityLevel = newTask.priorityLevel
+            newTask.status = newTask.status
             insert(newTask)
         }
         _backToTaskList.value = true
@@ -41,15 +53,17 @@ class TaskViewModel(
 
     fun onUpdateTask(task: Task) {
         uiScope.launch {
-            var dbTask = database.getTaskWithId(task.taskId)
-            if (dbTask == null) {
-                onSaveTask(task)
-            } else {
-                dbTask.title = task.title
-                dbTask.desc = task.desc
-                dbTask.priorityLevel = task.priorityLevel
-                dbTask.status = task.status
-                update(dbTask)
+            withContext(Dispatchers.IO) {
+                val dbTask = database.getTaskWithId(task.taskId)
+                if (dbTask == null) {
+                    onSaveTask()
+                } else {
+                    dbTask.title = task.title
+                    dbTask.desc = task.desc
+                    dbTask.priorityLevel = task.priorityLevel
+                    dbTask.status = task.status
+                    update(dbTask)
+                }
             }
         }
         _backToTaskList.value = true

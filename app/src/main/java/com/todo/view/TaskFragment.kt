@@ -16,7 +16,6 @@ import com.todo.R
 import com.todo.database.TaskDatabase
 import com.todo.databinding.FragmentTaskBinding
 
-import com.todo.model.Task
 import com.todo.viewModel.TaskViewModel
 import com.todo.viewModel.TaskViewModelFactory
 
@@ -36,11 +35,11 @@ class TaskFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
         val dataSource = TaskDatabase.getInstance(application).taskDatabaseDAO
-        val viewModelFactory = TaskViewModelFactory(dataSource)
+        val viewModelFactory = TaskViewModelFactory(arguments.taskId, dataSource)
         val taskViewModel = ViewModelProviders.of(this, viewModelFactory).get(TaskViewModel::class.java)
 
+        binding.lifecycleOwner = this
         binding.taskViewModel = taskViewModel
-        binding.task = Task()
 
         taskViewModel.backToTaskList.observe(this, Observer {
             if (it == true) {

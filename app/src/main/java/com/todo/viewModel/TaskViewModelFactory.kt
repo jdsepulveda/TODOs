@@ -10,7 +10,7 @@ class TaskViewModelFactory(
     private val dataSource: TaskDatabaseDAO) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TaskViewModel::class.java)) {
-            return TaskViewModel(dataSource) as T
+            return TaskViewModel(taskKey, dataSource) as T
         }
         throw IllegalArgumentException("Unknown ViewModel Class")
     }

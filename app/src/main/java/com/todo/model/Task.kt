@@ -4,14 +4,6 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
 
-//data class Task(
-//    var taskId: Long = 0L,
-//    var title: String = "",
-//    var desc: String = "",
-//    var priorityLevel: Int = 0,
-//    var status: Int = 1
-//) : BaseObservable()
-
 class Task : BaseObservable() {
     var taskId: Long = 0L
 
