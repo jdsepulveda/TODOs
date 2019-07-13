@@ -20,11 +20,10 @@ interface TaskDatabaseDAO {
     @Query("SELECT * FROM daily_task_table WHERE taskId = :key")
     fun getTaskWithId(key: Long): DBTask?
 
-    //WHERE task_status = false
-    @Query("SELECT * FROM daily_task_table ORDER BY task_priority DESC")
+    @Query("SELECT * FROM daily_task_table WHERE task_status = 0 ORDER BY task_priority DESC")
     fun getOpenTasks(): LiveData<List<DBTask>>
 
-    @Query("SELECT * FROM daily_task_table WHERE task_status = 0 ORDER BY task_priority DESC")
+    @Query("SELECT * FROM daily_task_table WHERE task_status = 1 ORDER BY task_priority DESC")
     fun getClosedTasks(): LiveData<List<DBTask>>
 
     @Query("SELECT * FROM daily_task_table ORDER BY taskId DESC LIMIT 1")

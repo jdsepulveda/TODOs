@@ -1,12 +1,10 @@
 package com.todo.viewModel
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.todo.database.DBTask
 import com.todo.database.TaskDatabaseDAO
 import com.todo.model.Task
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 class TaskViewModel(
     private val taskKey: Long = 0L,
@@ -20,7 +18,7 @@ class TaskViewModel(
         get() = _backToTaskList
 
     private var _task = MediatorLiveData<Task>()
-    var task : LiveData<Task>? = null
+    val task : LiveData<Task>
         get() = _task
 
     init {
@@ -35,28 +33,30 @@ class TaskViewModel(
         if (task.taskId > 0) {
             onUpdateTask(task)
         } else {
-            onSaveTask()
+            onSaveTask(task)
         }
     }
 
-    fun onSaveTask() {
+    private fun onSaveTask(task: Task) {
         uiScope.launch {
-            val newTask = DBTask()
-            newTask.title = newTask.title
-            newTask.desc = newTask.desc
-            newTask.priorityLevel = newTask.priorityLevel
-            newTask.status = newTask.status
-            insert(newTask)
+            withContext(Dispatchers.IO) {
+                val newTask = DBTask()
+                newTask.title = task.title
+                newTask.desc = task.desc
+                newTask.priorityLevel = task.priorityLevel
+                newTask.status = task.status
+                insert(newTask)
+            }
         }
         _backToTaskList.value = true
     }
 
-    fun onUpdateTask(task: Task) {
+    private fun onUpdateTask(task: Task) {
         uiScope.launch {
             withContext(Dispatchers.IO) {
                 val dbTask = database.getTaskWithId(task.taskId)
                 if (dbTask == null) {
-                    onSaveTask()
+                    onSaveTask(task)
                 } else {
                     dbTask.title = task.title
                     dbTask.desc = task.desc
@@ -81,11 +81,13 @@ class TaskViewModel(
         }
     }
 
-    private suspend fun getLastTask() : DBTask? {
-        return withContext(Dispatchers.IO) {
-            val task = database.getLastTask()
-            task
+    fun onDelete(task: Task) {
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                database.delete(task.taskId)
+            }
         }
+        _backToTaskList.value = true
     }
 
     fun doneBackToTaskList() {

@@ -4,10 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-        <!--<variable-->
-            <!--name="task"-->
-            <!--type="com.too.model.Task"/>-->
-
+        <import type="android.view.View"/>
         <variable
             name="taskViewModel"
             type="com.todo.viewModel.TaskViewModel"/>
@@ -113,7 +110,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btnCancel"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toStartOf="@+id/btnSave"/>
+            app:layout_constraintEnd_toStartOf="@+id/btnSave"
+            android:visibility="@{taskViewModel.task.taskId > 0 ? View.VISIBLE : View.GONE}"
+            android:onClick="@{() -> taskViewModel.onDelete(taskViewModel.task)}"/>
 
         <Button
             android:text="@string/save"
